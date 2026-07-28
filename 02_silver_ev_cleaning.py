@@ -122,6 +122,7 @@ flattened_df = parsed_df.select(
     F.col("station.UsageTypeID").alias("usage_type_id"),
     F.col("station.StatusTypeID").alias("status_type_id"),
     F.col("station.AddressInfo.Title").alias("title"),
+    F.col("station.AddressInfo.AddressLine1").alias("address_line1"),
     F.col("station.AddressInfo.Town").alias("town"),
     F.col("station.AddressInfo.StateOrProvince").alias("state_or_province"),
     F.col("station.AddressInfo.Latitude").cast("double").alias("latitude"),
@@ -384,7 +385,17 @@ display(
 
 # COMMAND ----------
 
-if spark.catalog.tableExists("quarantine_ev_connections"):
-    display(spark.table("quarantine_ev_connections"))
-else:
-    print("No quarantine table yet — no bad records encountered so far.")
+display(spark.table("bronze_ev_stations").limit(5))
+
+# COMMAND ----------
+
+display(spark.table("silver_ev_stations").limit(5))
+
+# COMMAND ----------
+
+status_lookup_df = get_status_type_lookup()
+display(status_lookup_df)
+
+# COMMAND ----------
+
+display(spark.table("silver_ev_stations").select("title", "address_line1").limit(5))
